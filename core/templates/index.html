@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbearia Wilian</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Fundo e cores principais */
+        body { background-color: #1a1a1a; color: white; font-family: sans-serif; }
+        
+        .header-bar { border-bottom: 2px solid #ffc107; padding: 40px 0; text-align: center; }
+        .text-yellow { color: #ffc107; }
+        
+        /* Estilo dos Cards (Serviços) */
+        .servico-card { 
+            background-color: #262626; 
+            border: 1px solid #444; 
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            height: 100%;
+        }
+        
+        /* Botões */
+        .btn-agendar { 
+            background-color: #ffc107; 
+            color: #000; 
+            font-weight: bold; 
+            border: none;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .btn-agendar:hover { background-color: #e5ac00; color: #000; }
+        
+        .container { max-width: 900px; }
+    </style>
+</head>
+<body>
+
+    <div class="header-bar">
+        <h1 class="fw-bold text-yellow" style="letter-spacing: 8px; font-size: 3rem;">BARBER SHOP</h1>
+        <p style="text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Estilo e Precisão</p>
+    </div>
+    
+    <div class="container my-5">
+        <h3 class="mb-4">Nossos Serviços</h3>
+        
+        <div class="row g-4">
+            {% for servico in servicos %}
+            <div class="col-md-4">
+                <div class="servico-card">
+                    <h4 class="text-yellow">{{ servico.nome }}</h4>
+                    <p class="fs-4">R$ {{ servico.preco }}</p>
+                    <a href="{% url 'agendar' %}" class="btn-agendar">AGENDAR</a>
+                </div>
+            </div>
+            {% empty %}
+            <p>Nenhum serviço disponível.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+</body>
+</html>
