@@ -1,40 +1,84 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia Wilian</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Barber Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Fundo e cores principais */
-        body { background-color: #1a1a1a; color: white; font-family: sans-serif; }
+        /* Arte Final: Visual Premium */
+        body { background-color: #121212; color: white; font-family: sans-serif; }
         
         .header-bar { border-bottom: 2px solid #ffc107; padding: 40px 0; text-align: center; }
         .text-yellow { color: #ffc107; }
-        
-        /* Estilo dos Cards (Serviços) */
+
+        /* Botões Discretos e Pequenos */
+        .btn-outline-yellow {
+            border: 1px solid #ffc107;
+            color: #ffc107;
+            background: transparent;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            opacity: 0.7;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .btn-outline-yellow:hover { background: #ffc107; color: #000; opacity: 1; }
+
+        /* Estilo dos Cards de Serviço */
         .servico-card { 
-            background-color: #262626; 
-            border: 1px solid #444; 
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
+            background-color: #1e1e1e; 
+            border: 1px solid #333; 
+            border-radius: 12px;
+            padding: 25px; 
+            text-align: center; 
+            transition: 0.3s;
             height: 100%;
         }
-        
-        /* Botões */
-        .btn-agendar { 
+        .servico-card:hover { border-color: #ffc107; transform: translateY(-5px); }
+
+        .btn-yellow { 
             background-color: #ffc107; 
             color: #000; 
             font-weight: bold; 
-            border: none;
-            padding: 10px 20px;
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
             text-decoration: none;
-            border-radius: 5px;
             display: inline-block;
-            margin-top: 15px;
+            width: 100%;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
-        .btn-agendar:hover { background-color: #e5ac00; color: #000; }
+        .btn-yellow:hover { background-color: #e5ac00; color: #000; }
+
+        /* Ajustes das Janelas (Modais) */
+        .modal-content { background-color: #1e1e1e; color: white; border: 1px solid #ffc107; border-radius: 15px; }
+        
+        /* Contraste dos inputs e placeholders */
+        .form-control-sm { 
+            background-color: #121212; 
+            border: 1px solid #444; 
+            color: white !important; 
+            padding-left: 12px;
+        }
+
+        .form-control-sm::placeholder { 
+            color: #ffffff !important; 
+            opacity: 0.8; /* Clareia bem o texto de exemplo */
+            font-size: 0.75rem;
+            text-transform: uppercase;
+        }
+
+        .form-control-sm:focus { 
+            background-color: #121212; 
+            color: white; 
+            border-color: #ffc107; 
+            box-shadow: none; 
+        }
         
         .container { max-width: 900px; }
     </style>
@@ -43,26 +87,66 @@
 
     <div class="header-bar">
         <h1 class="fw-bold text-yellow" style="letter-spacing: 8px; font-size: 3rem;">BARBER SHOP</h1>
-        <p style="text-transform: uppercase; letter-spacing: 2px; opacity: 0.9;">Estilo e Precisão</p>
+        <p style="text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; font-size: 0.8rem;">Estilo e Precisão</p>
+        
+        <div class="mt-2">
+            <button class="btn-outline-yellow" data-bs-toggle="modal" data-bs-target="#modalServico">+ ADICIONAR SERVIÇO</button>
+            <button class="btn-outline-yellow" data-bs-toggle="modal" data-bs-target="#modalCliente">+ NOVO CLIENTE</button>
+        </div>
     </div>
-    
+
     <div class="container my-5">
-        <h3 class="mb-4">Nossos Serviços</h3>
+        <h3 class="mb-4" style="font-weight: 300; font-size: 1.2rem; letter-spacing: 1px;">Nossos Serviços</h3>
         
         <div class="row g-4">
             {% for servico in servicos %}
             <div class="col-md-4">
                 <div class="servico-card">
-                    <h4 class="text-yellow">{{ servico.nome }}</h4>
-                    <p class="fs-4">R$ {{ servico.preco }}</p>
-                    <a href="{% url 'agendar' %}" class="btn-agendar">AGENDAR</a>
+                    <h4 class="text-yellow mb-3" style="font-size: 1.1rem; text-transform: uppercase;">{{ servico.nome }}</h4>
+                    <p class="fs-3 mb-4">R$ {{ servico.preco }}</p>
+                    <a href="{% url 'agendar' %}" class="btn-yellow">AGENDAR</a>
                 </div>
             </div>
             {% empty %}
-            <p>Nenhum serviço disponível.</p>
+            <div class="col-12 text-center py-5">
+                <p class="opacity-50">Nenhum serviço cadastrado ainda.</p>
+            </div>
             {% endfor %}
         </div>
     </div>
 
+    <div class="modal fade" id="modalServico" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 350px;">
+            <div class="modal-content">
+                <form action="{% url 'cadastrar_servico' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body p-4 text-center">
+                        <h6 class="text-yellow mb-4 text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">Novo Serviço</h6>
+                        <input type="text" name="nome" class="form-control form-control-sm mb-3" placeholder="NOME DO CORTE" required>
+                        <input type="number" step="0.01" name="preco" class="form-control form-control-sm mb-4" placeholder="PREÇO (R$)" required>
+                        <button type="submit" class="btn-yellow py-2">SALVAR CORTE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCliente" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 350px;">
+            <div class="modal-content">
+                <form action="{% url 'cadastrar_cliente' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="modal-body p-4 text-center">
+                        <h6 class="text-yellow mb-4 text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">Novo Cliente</h6>
+                        <input type="text" name="nome" class="form-control form-control-sm mb-3" placeholder="NOME COMPLETO" required>
+                        <input type="text" name="telefone" class="form-control form-control-sm mb-4" placeholder="TELEFONE DE CONTATO" required>
+                        <button type="submit" class="btn-yellow py-2">CADASTRAR CLIENTE</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

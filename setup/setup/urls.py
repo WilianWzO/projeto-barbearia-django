@@ -16,7 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from core import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.index, name='index'),
+    path('agendar/', views.agendar, name='agendar'),
+    
+    # NOVAS ROTAS PARA OS MODAIS FUNCIONAREM
+    path('cadastrar-servico/', views.cadastrar_servico, name='cadastrar_servico'),
+    path('cadastrar-cliente/', views.cadastrar_cliente, name='cadastrar_cliente'),
 ]
