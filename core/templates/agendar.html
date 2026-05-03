@@ -3,49 +3,74 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marcar Horário | Barber Shop</title>
+    <title>{{ t.confirmar }} | Barber Shop</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+                        url('{% static "img/man-barbershop-salon-doing-haircut-beard-trim.jpg" %}') no-repeat center center fixed; 
+            background-size: cover; color: white; min-height: 100vh; 
+            display: flex; align-items: center; justify-content: center; font-family: 'Montserrat', sans-serif;
+        }
+        .agendar-card { 
+            background: rgba(0,0,0,0.9); border: 4px solid #ff6600; border-radius: 25px; 
+            padding: 40px; width: 100%; max-width: 500px; box-shadow: 0 0 25px rgba(255,102,0,0.6); 
+        }
+        .form-label { color: #ff6600; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 1px; }
+        .form-control, .form-select { 
+            background-color: #1a1a1a !important; border: 2px solid #ff6600 !important; 
+            color: white !important; border-radius: 12px; padding: 12px; margin-bottom: 20px; 
+        }
+        .form-select option { background: #1a1a1a; color: white; }
+        .btn-confirm { 
+            background: #ff6600; color: white; font-family: 'Bebas Neue', sans-serif; 
+            font-size: 1.8rem; width: 100%; padding: 10px; border-radius: 12px; border: none; transition: 0.3s;
+        }
+        .btn-confirm:hover { background: #fff; color: #ff6600; }
+        /* Ajuste para o ícone do calendário ficar visível no fundo escuro */
+        ::-webkit-calendar-picker-indicator { filter: invert(1); }
+    </style>
 </head>
-<body style="background-color: #121212; color: white;">
+<body>
+    <div class="agendar-card">
+        <h2 class="text-center mb-4" style="font-family: 'Orbitron', sans-serif; color:#ff6600">{{ t.confirmar }}</h2>
+        
+        {% if erro %}
+            <div class="alert alert-danger text-center fw-bold">{{ erro }}</div>
+        {% endif %}
 
-    <div class="container my-5 text-center" style="max-width: 500px;">
-        <h1 class="text-yellow fw-bold mb-4" style="letter-spacing: 2px;">MARCAR HORÁRIO</h1>
-
-        <form action="{% url 'agendar' %}" method="POST" class="p-4" style="background-color: #1e1e1e; border: 1px solid #ffc107; border-radius: 15px;">
+        <form method="POST">
             {% csrf_token %}
-
-            <div class="mb-4 text-start">
-                <label class="form-label text-yellow small fw-bold">QUEM É O CLIENTE?</label>
-                <select name="cliente" class="form-control" style="background: #121212; color: white; border: 1px solid #444;" required>
-                    <option value="" disabled selected>Selecione o cliente...</option>
-                    {% for cliente in clientes %}
-                        <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-4 text-start">
-                <label class="form-label text-yellow small fw-bold">QUAL É O SERVIÇO?</label>
-                <select name="servico" class="form-control" style="background: #121212; color: white; border: 1px solid #444;" required>
-                    <option value="" disabled selected>Selecione o corte...</option>
-                    {% for servico in servicos %}
-                        <option value="{{ servico.id }}">{{ servico.nome }} - R$ {{ servico.preco }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="mb-4 text-start">
-                <label class="form-label text-yellow small fw-bold">DIA E HORÁRIO</label>
-                <input type="datetime-local" name="data_hora" class="form-control" style="background: #121212; color: white; border: 1px solid #444;" required>
-            </div>
-
-            <button type="submit" class="btn-yellow w-100 py-3 fw-bold mb-3">CONFIRMAR AGENDAMENTO</button>
             
-            <a href="{% url 'index' %}" class="text-decoration-none opacity-75" style="color: white; font-size: 0.9rem;">Voltar para o início</a>
+            <label class="form-label">{{ t.clientes }}</label>
+            <select name="cliente" class="form-select" required>
+                <option value="" disabled selected>Selecione...</option>
+                {% for c in clientes %}
+                    <option value="{{ c.id }}">{{ c.nome }}</option>
+                {% endfor %}
+            </select>
+
+            <label class="form-label">{{ t.servicos }}</label>
+            <select name="servico" class="form-select" required>
+                {% for s in servicos %}
+                    <option value="{{ s.id }}" {% if servico_selecionado_id|add:"0" == s.id %}selected{% endif %}>
+                        {{ s.nome }} - R$ {{ s.preco }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label class="form-label">{{ t.data_hora }}</label>
+            <input type="datetime-local" name="data" class="form-control" required>
+
+            <button type="submit" class="btn-confirm">{{ t.confirmar }}</button>
+            
+            <div class="text-center mt-3">
+                <a href="{% url 'index' %}" class="text-decoration-none" style="color: #ff6600; font-family: 'Bebas Neue'; font-size: 1.2rem;">
+                    {{ t.voltar }}
+                </a>
+            </div>
         </form>
     </div>
-
 </body>
 </html>

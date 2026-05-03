@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ t.gestao }} | Barber Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+                        url('{% static "img/man-barbershop-salon-doing-haircut-beard-trim.jpg" %}') no-repeat center center fixed;
+            background-size: cover; color: white; min-height: 100vh;
+        }
+        .container { padding-top: 80px; padding-bottom: 50px; }
+        .panel-card {
+            background: rgba(0, 0, 0, 0.8); border: 4px solid #ff6600; border-radius: 20px; padding: 25px; margin-bottom: 30px;
+        }
+        .section-title { font-family: 'Orbitron', sans-serif; color: #ff6600; border-bottom: 2px solid #ff6600; padding-bottom: 10px; margin-bottom: 20px; }
+        .form-control { background: rgba(20,20,20,0.9); border: 1px solid #ff6600; color: white; }
+        .list-item { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-edit { background: #ffc107; color: black; font-weight: bold; border-radius: 5px; text-decoration: none; padding: 5px 15px; }
+        .btn-back { border: 2px solid #ff6600; color: #ff6600; text-decoration: none; font-weight: bold; padding: 10px 25px; border-radius: 30px; }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <div class="mb-5"><a href="{% url 'index' %}" class="btn-back">← {{ t.voltar }}</a></div>
+
+        <div class="row text-start">
+            <div class="col-md-6">
+                <div class="panel-card">
+                    <h3 class="section-title">{{ t.servicos }}</h3>
+                    <form method="POST" class="mb-4">{% csrf_token %}
+                        <input type="hidden" name="form_type" value="servico">
+                        <input type="hidden" name="item_id" value="{{ servico_edit.id }}">
+                        <input type="text" name="nome" class="form-control mb-2" value="{{ servico_edit.nome }}" placeholder="Nome" required>
+                        <input type="number" step="0.01" name="preco" class="form-control mb-2" value="{{ servico_edit.preco }}" placeholder="Preço" required>
+                        <button class="btn btn-warning w-100 fw-bold">{{ t.salvar }}</button>
+                    </form>
+                    {% for s in servicos %}
+                    <div class="list-item">
+                        <span>{{ s.nome }} - R$ {{ s.preco }}</span>
+                        <a href="?edit_servico={{ s.id }}" class="btn-edit">{{ t.editar }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel-card">
+                    <h3 class="section-title">{{ t.clientes }}</h3>
+                    <form method="POST" class="mb-4">{% csrf_token %}
+                        <input type="hidden" name="form_type" value="cliente">
+                        <input type="hidden" name="item_id" value="{{ cliente_edit.id }}">
+                        <input type="text" name="nome" class="form-control mb-2" value="{{ cliente_edit.nome }}" placeholder="Nome" required>
+                        <button class="btn btn-warning w-100 fw-bold">{{ t.salvar }}</button>
+                    </form>
+                    {% for c in clientes %}
+                    <div class="list-item">
+                        <span>{{ c.nome }}</span>
+                        <a href="?edit_cliente={{ c.id }}" class="btn-edit">{{ t.editar }}</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
